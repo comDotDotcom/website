@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -16,10 +17,6 @@
             padding: 50px 0;
             background-color: #2c3e50;
             color: white;
-        }
-        header h1 {
-            margin: 0;
-            font-size: 3em;
         }
         nav {
             text-align: center;
@@ -43,7 +40,45 @@
             width: 100%;
             max-width: 300px;
             border-radius: 8px;
+            cursor: pointer;
         }
+
+        /* Lightbox-styling */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .lightbox-img {
+            max-width: 80%;
+            max-height: 80%;
+            border-radius: 8px;
+        }
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+        }
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+            transform: translateY(-50%);
+        }
+        .prev { left: 10px; }
+        .next { right: 10px; }
     </style>
 </head>
 <body>
@@ -51,18 +86,82 @@
         <h1>Foto's van de Vakantiewoning</h1>
     </header>
 
-    <!-- Navigatiemenu -->
     <nav>
         <a href="index.html">Home</a>
         <a href="foto's.html">Foto's</a>
         <a href="contact.html">Contact</a>
     </nav>
 
-    <div class="photo-gallery">
-        <img src="foto1.jpg" alt="Foto 1">
-        <img src="foto2.jpg" alt="Foto 2">
-        <img src="foto3.jpg" alt="Foto 3">
         <!-- Voeg hier meer foto's toe -->
+
+    <!-- Fotogalerij -->
+    <div class="photo-gallery">
+        <img src="zee1.png" alt="Foto 1" class="gallery-img" data-src="zee1.png">
+        <img src="zee2.jpeg" alt="Foto 2" class="gallery-img" data-src="zee2.jpeg">
+        <img src="zee3.jpeg" alt="Foto 3" class="gallery-img" data-src="zee3.jpeg">
     </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox">
+        <span class="close">&times;</span>
+        <img class="lightbox-img">
+        <a class="prev">&#10094;</a>
+        <a class="next">&#10095;</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const images = document.querySelectorAll(".gallery-img");
+            const lightbox = document.getElementById("lightbox");
+            const lightboxImg = document.querySelector(".lightbox-img");
+            const closeBtn = document.querySelector(".close");
+            const prevBtn = document.querySelector(".prev");
+            const nextBtn = document.querySelector(".next");
+
+            let currentIndex = 0;
+            
+            function showImage(index) {
+                if (index < 0) index = images.length - 1;
+                if (index >= images.length) index = 0;
+                currentIndex = index;
+                lightboxImg.src = images[index].dataset.src;
+            }
+
+            images.forEach((img, index) => {
+                img.addEventListener("click", () => {
+                    lightbox.style.display = "flex";
+                    showImage(index);
+                });
+            });
+
+            closeBtn.addEventListener("click", () => {
+                lightbox.style.display = "none";
+            });
+
+            prevBtn.addEventListener("click", () => {
+                showImage(currentIndex - 1);
+            });
+
+            nextBtn.addEventListener("click", () => {
+                showImage(currentIndex + 1);
+            });
+
+            lightbox.addEventListener("click", (e) => {
+                if (e.target === lightbox) {
+                    lightbox.style.display = "none";
+                }
+            });
+
+            document.addEventListener("keydown", (e) => {
+                if (lightbox.style.display === "flex") {
+                    if (e.key === "ArrowLeft") showImage(currentIndex - 1);
+                    if (e.key === "ArrowRight") showImage(currentIndex + 1);
+                    if (e.key === "Escape") lightbox.style.display = "none";
+                }
+            });
+        });
+    </script>
 </body>
 </html>
+
+ 
